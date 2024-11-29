@@ -1,11 +1,15 @@
-# Rust Package Template
+# hashtag
 
-Simple Rust package starter template.
+> <#>
 
-- Clone using `@pr4j3sh/frames`
+Markdown to HTML Parser
+
+## Usage
+
+- Use `run`
 
 ```bash
-npm create @pr4j3sh/frames@latest rust mypkg
+cargo run
 ```
 
 ## References
