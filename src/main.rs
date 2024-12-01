@@ -1,40 +1,43 @@
 fn main() {
-    let html = "<h1>heading 1</h1>\n<h2>heading 2</h2>            <h3>heading 3</h3>";
-    let mut md = String::from("");
-    let mut start_tag = String::from("");
-    println!("[debug] {}", html);
-    let mut start_tag_starts = false;
-    let mut start_tag_ends = false;
-    let mut end_tag_starts = false;
-    let mut end_tag_ends = true;
+    let md = "# Heading 1\n## Heading 2";
+    println!("[debug] {md}");
+    let mut html = String::from("");
+    let mut h1 = String::from("");
+    let mut h2 = String::from("");
+    let mut heading_count = 0;
 
-    for i in html.chars() {
-        if end_tag_starts && i == '>' {
-            end_tag_starts == false;
-            end_tag_ends = true;
+    let mut tag_h1 = false;
+    let mut tag_h2 = false;
+
+    for i in md.chars() {
+        if tag_h1 {
+            h1.push(i);
         }
-        if start_tag_ends {
-            if i == '<' {
-                start_tag_ends = false;
-                end_tag_starts = true;
-            } else {
-                md.push(i);
-            }
+        if tag_h2 {
+            h2.push(i);
         }
-        if start_tag_starts {
-            if i == '>' {
-                println!("[debug] {}", start_tag);
-                start_tag_ends = true;
-                start_tag_starts = false;
-                end_tag_ends = false;
-            } else {
-                start_tag.push(i);
-            }
+        if heading_count == 2 && i != '#' {
+            tag_h2 = true;
         }
-        if i == '<' && end_tag_ends {
-            start_tag_starts = true;
+        if heading_count == 1 && i != '#' {
+            tag_h1 = true;
+        }
+        if heading_count > 0 && i == '#' {
+            heading_count += 1;
+        }
+        if i == '#' {
+            heading_count = 0;
+            tag_h1 = false;
+            tag_h2 = false;
+            heading_count += 1;
         }
     }
 
-    println!("[debug] {}", md);
+    for i in h1.chars() {
+        println!("[debug] {i}");
+    }
+
+    // for i in html.chars() {
+    //     println!("[debug] {i}");
+    // }
 }
