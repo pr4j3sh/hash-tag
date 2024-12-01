@@ -87,10 +87,6 @@ fn main() {
             }
             count_hash = 0;
         }
-        if count_hash == 2 && i != '#' {
-            println!("{i}");
-            break;
-        }
         // ---------------- headings -------------------
 
         print!("|");
