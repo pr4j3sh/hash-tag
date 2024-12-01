@@ -66,7 +66,6 @@ fn main() {
             count_hash += 1;
         }
         if count_hash > 0 && i == ' ' {
-            print!("({count_hash})");
             if count_hash == 1 {
                 flag_h1 = true;
             }
