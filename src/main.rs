@@ -1,13 +1,13 @@
 fn main() {
     let md = String::from(
-        "# Title `1`\n## Title 2\n### title 3\n#### title 4\n##### Title 5\n###### Title 6\n",
+        "# Title `1`\nthis is `crazy`\n## Title 2\n### title 3\n#### title 4\n##### Title 5\n###### Title 6\n",
     );
     let mut html = String::from("");
 
     let mut count_hash = 0;
 
     let mut i = 0;
-    let size = md.len();
+    let n = md.len();
 
     let mut tag_head = false;
     let mut tag_head_h1 = false;
@@ -16,8 +16,9 @@ fn main() {
     let mut tag_head_h4 = false;
     let mut tag_head_h5 = false;
     let mut tag_head_h6 = false;
+    let mut tag_code = false;
 
-    while i < size {
+    while i < n {
         if let Some(c) = md.chars().nth(i) {
             println!("{:2} | {}", i, c);
             if c == '#' {
@@ -54,7 +55,24 @@ fn main() {
                 count_hash = 0;
             }
 
-            if tag_head && c != '#' && c != '\n' {
+            if c == '`' {
+                html.push_str("<code>");
+                let mut j = i + 1;
+                while j < n {
+                    if let Some(c) = md.chars().nth(j) {
+                        if c == '`' {
+                            html.push_str("</code>");
+                            break;
+                        } else {
+                            html.push(c);
+                        }
+                    }
+                    j += 1;
+                }
+                i = j;
+            }
+
+            if tag_head && c != '#' && c != '\n' && c != '`' {
                 html.push(c);
             }
 
@@ -81,9 +99,8 @@ fn main() {
 
                 tag_head = false;
             }
-
-            i += 1;
         }
+        i += 1;
     }
 
     for (i, c) in html.chars().enumerate() {
