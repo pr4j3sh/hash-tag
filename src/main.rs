@@ -1,5 +1,5 @@
 fn main() {
-    let md = String::from("# Heading 1\n#### Heading 4\n## Heading 2");
+    let md = String::from("# Heading 1 `code`\n#### Heading 4\n## Heading 2");
 
     let mut count_hash = 0;
     let mut flag_h1 = false;
@@ -18,7 +18,10 @@ fn main() {
     for i in md.chars() {
         print!("|");
         print!("{i}");
+        print!("|");
+    }
 
+    for i in md.chars() {
         // ---------------- headings -------------------
         if flag_h1 {
             if i == '\n' {
@@ -87,8 +90,6 @@ fn main() {
             count_hash = 0;
         }
         // ---------------- headings -------------------
-
-        print!("|");
     }
 
     let tag_h1 = format!("<h1>{text_h1}</h1>");
@@ -97,10 +98,17 @@ fn main() {
     let tag_h4 = format!("<h4>{text_h4}</h4>");
     let tag_h5 = format!("<h5>{text_h5}</h5>");
     let tag_h6 = format!("<h6>{text_h6}</h6>");
+
     println!("\nh1 - {}", tag_h1);
     println!("h2 - {}", tag_h2);
     println!("h3 - {}", tag_h3);
     println!("h4 - {}", tag_h4);
     println!("h5 - {}", tag_h5);
     println!("h6 - {}", tag_h6);
+
+    for i in md.chars() {
+        print!("|");
+        print!("{i}");
+        print!("|");
+    }
 }
