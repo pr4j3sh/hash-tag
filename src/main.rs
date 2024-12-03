@@ -1,10 +1,11 @@
 fn main() {
     let md = String::from(
-        "# Title `1`\nthis is `crazy`\n## Title 2\n### title 3\n#### title 4\n##### Title 5\n###### Title 6\n",
+        "# Title `okay`\nthis is `crazy`\n## Title 2\n```\nvar j = 4;\n```\n### title 3\n#### title 4\n##### Title 5\n###### Title 6\n",
     );
     let mut html = String::from("");
 
     let mut count_hash = 0;
+    let mut count_backtick = 0;
 
     let mut i = 0;
     let n = md.len();
@@ -16,11 +17,13 @@ fn main() {
     let mut tag_head_h4 = false;
     let mut tag_head_h5 = false;
     let mut tag_head_h6 = false;
+    let mut tag_backtick = false;
     let mut tag_code = false;
+    let mut tag_pre = false;
 
     while i < n {
         if let Some(c) = md.chars().nth(i) {
-            println!("{:2} | {}", i, c);
+            println!("{:4} | {}", i, c);
             if c == '#' {
                 for j in i..i + 6 {
                     if let Some(l) = md.chars().nth(j) {
@@ -55,24 +58,43 @@ fn main() {
                 count_hash = 0;
             }
 
-            if c == '`' {
-                html.push_str("<code>");
-                let mut j = i + 1;
-                while j < n {
-                    if let Some(c) = md.chars().nth(j) {
-                        if c == '`' {
-                            html.push_str("</code>");
-                            break;
-                        } else {
-                            html.push(c);
+            if c == '`' && !tag_backtick {
+                for j in i..i + 3 {
+                    if let Some(l) = md.chars().nth(j) {
+                        if l == '`' {
+                            println!("{l}");
+                            count_backtick += 1;
                         }
                     }
-                    j += 1;
                 }
-                i = j;
+                println!("{count_backtick}");
+                i += count_backtick - 1;
+                if count_backtick == 1 {
+                    html.push_str("<code>");
+                    tag_code = true;
+                } else if count_backtick == 3 {
+                    html.push_str("<pre><code>");
+                    tag_pre = true;
+                }
+                tag_backtick = true;
+                count_backtick = 0;
+            } else if tag_backtick && c == '`' {
+                if tag_code {
+                    html.push_str("</code>");
+                    tag_code = false;
+                } else if tag_pre {
+                    html.push_str("</code></pre>");
+                    tag_pre = false;
+                }
+
+                tag_backtick = false;
             }
 
-            if tag_head && c != '#' && c != '\n' && c != '`' {
+            if tag_backtick && c != '`' {
+                html.push(c);
+            }
+
+            if tag_head && !tag_backtick && c != '#' && c != '\n' && c != '`' {
                 html.push(c);
             }
 
@@ -104,7 +126,7 @@ fn main() {
     }
 
     for (i, c) in html.chars().enumerate() {
-        println!("{:2} | {}", i, c);
+        println!("{:4} | {}", i, c);
     }
     println!("{}", html);
 }
