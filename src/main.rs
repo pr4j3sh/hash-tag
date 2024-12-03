@@ -1,7 +1,40 @@
-fn main() {
-    let md = String::from(
-        "# Title `okay`\nthis is `crazy`\n## Title 2\n```\nvar j = 4;\n```\n### title 3\n#### title 4\n> just happening\n- what?\n##### Title 5\n###### Title 6\n> this is a `quote`\n- one\n- two\n- three\n",
-    );
+use std::fs;
+use std::io;
+
+fn read_file(filename: &str) -> io::Result<String> {
+    let md = fs::read_to_string(filename)?;
+    Ok(md)
+}
+
+fn write_file(filename: &str, html: &str) -> io::Result<()> {
+    fs::write(filename, html)?;
+    Ok(())
+}
+
+fn get_lines(md: &str) -> Vec<String> {
+    let mut lines: Vec<String> = Vec::new();
+    let mut line = String::from("");
+    for c in md.chars() {
+        if c == '\n' {
+            if !line.is_empty() {
+                lines.push(line.clone());
+            }
+            line.clear();
+        } else {
+            line.push(c);
+        }
+    }
+    lines
+}
+
+fn main() -> io::Result<()> {
+    let md = read_file("README.md")?;
+
+    let lines: Vec<String> = get_lines(&md);
+
+    for (i, line) in lines.iter().enumerate() {
+        println!("{:4} | {:4} | {line}", i, line.len());
+    }
     let mut html = String::from("");
 
     let mut count_hash = 0;
@@ -22,6 +55,7 @@ fn main() {
     let mut tag_pre = false;
     let mut tag_blockquote = false;
     let mut tag_list = false;
+    let mut tag_paragraph = false;
 
     while i < n {
         if let Some(c) = md.chars().nth(i) {
@@ -154,4 +188,8 @@ fn main() {
     }
 
     println!("{}", html);
+
+    write_file("index.html", &html);
+
+    Ok(())
 }
