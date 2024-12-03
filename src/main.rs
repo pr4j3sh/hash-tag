@@ -1,6 +1,6 @@
 fn main() {
     let md = String::from(
-        "# Title `okay`\nthis is `crazy`\n## Title 2\n```\nvar j = 4;\n```\n### title 3\n#### title 4\n##### Title 5\n###### Title 6\n",
+        "# Title `okay`\nthis is `crazy`\n## Title 2\n```\nvar j = 4;\n```\n### title 3\n#### title 4\n##### Title 5\n###### Title 6\n> this is a `quote`\n",
     );
     let mut html = String::from("");
 
@@ -20,6 +20,7 @@ fn main() {
     let mut tag_backtick = false;
     let mut tag_code = false;
     let mut tag_pre = false;
+    let mut tag_blockquote = false;
 
     while i < n {
         if let Some(c) = md.chars().nth(i) {
@@ -58,6 +59,11 @@ fn main() {
                 count_hash = 0;
             }
 
+            if c == '>' {
+                html.push_str("<blockquote>");
+                tag_blockquote = true;
+            }
+
             if c == '`' && !tag_backtick {
                 for j in i..i + 3 {
                     if let Some(l) = md.chars().nth(j) {
@@ -85,17 +91,28 @@ fn main() {
                 } else if tag_pre {
                     html.push_str("</code></pre>");
                     tag_pre = false;
+                    i += 2;
                 }
 
                 tag_backtick = false;
+                println!("{tag_backtick}");
             }
 
-            if tag_backtick && c != '`' {
+            if tag_backtick && c != '`' && c != '#' && c != '>' {
                 html.push(c);
             }
 
             if tag_head && !tag_backtick && c != '#' && c != '\n' && c != '`' {
                 html.push(c);
+            }
+
+            if tag_blockquote && !tag_backtick && c != '>' && c != '\n' && c != '#' && c != '`' {
+                html.push(c);
+            }
+
+            if tag_blockquote && c == '\n' {
+                html.push_str("</blockquote>");
+                tag_blockquote = false;
             }
 
             if tag_head && c == '\n' {
@@ -125,8 +142,5 @@ fn main() {
         i += 1;
     }
 
-    for (i, c) in html.chars().enumerate() {
-        println!("{:4} | {}", i, c);
-    }
     println!("{}", html);
 }
