@@ -1,6 +1,6 @@
 fn main() {
     let md = String::from(
-        "# Title `okay`\nthis is `crazy`\n## Title 2\n```\nvar j = 4;\n```\n### title 3\n#### title 4\n##### Title 5\n###### Title 6\n> this is a `quote`\n",
+        "# Title `okay`\nthis is `crazy`\n## Title 2\n```\nvar j = 4;\n```\n### title 3\n#### title 4\n> just happening\n- what?\n##### Title 5\n###### Title 6\n> this is a `quote`\n- one\n- two\n- three\n",
     );
     let mut html = String::from("");
 
@@ -21,6 +21,7 @@ fn main() {
     let mut tag_code = false;
     let mut tag_pre = false;
     let mut tag_blockquote = false;
+    let mut tag_list = false;
 
     while i < n {
         if let Some(c) = md.chars().nth(i) {
@@ -57,11 +58,12 @@ fn main() {
                 }
                 tag_head = true;
                 count_hash = 0;
-            }
-
-            if c == '>' {
+            } else if c == '>' {
                 html.push_str("<blockquote>");
                 tag_blockquote = true;
+            } else if c == '-' {
+                html.push_str("<li>");
+                tag_list = true;
             }
 
             if c == '`' && !tag_backtick {
@@ -102,12 +104,21 @@ fn main() {
                 html.push(c);
             }
 
+            if tag_list && !tag_backtick && c != '-' && c != '\n' {
+                html.push(c);
+            }
+
             if tag_head && !tag_backtick && c != '#' && c != '\n' && c != '`' {
                 html.push(c);
             }
 
             if tag_blockquote && !tag_backtick && c != '>' && c != '\n' && c != '#' && c != '`' {
                 html.push(c);
+            }
+
+            if tag_list && c == '\n' {
+                html.push_str("</li>");
+                tag_list = false;
             }
 
             if tag_blockquote && c == '\n' {
