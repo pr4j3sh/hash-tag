@@ -4,14 +4,6 @@
 
 Markdown to HTML Parser
 
-### Features
-
-- Headings
-- Lists
-- Inline Code
-- Codeblock
-- Blockquote
-
 ## Usage
 
 - Use `run`

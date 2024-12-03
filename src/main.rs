@@ -28,13 +28,10 @@ fn get_lines(md: &str) -> Vec<String> {
 }
 
 fn main() -> io::Result<()> {
-    let md = read_file("README.md")?;
+    let md = read_file("test.md")?;
 
     let lines: Vec<String> = get_lines(&md);
 
-    for (i, line) in lines.iter().enumerate() {
-        println!("{:4} | {:4} | {line}", i, line.len());
-    }
     let mut html = String::from("");
 
     let mut count_hash = 0;
@@ -54,142 +51,48 @@ fn main() -> io::Result<()> {
     let mut tag_code = false;
     let mut tag_pre = false;
     let mut tag_blockquote = false;
-    let mut tag_list = false;
-    let mut tag_paragraph = false;
+    let mut tag_ul = false;
+    let mut tag_ol = false;
+    let mut tag_p = false;
 
-    while i < n {
-        if let Some(c) = md.chars().nth(i) {
-            println!("{:4} | {}", i, c);
-            if c == '#' {
-                for j in i..i + 6 {
-                    if let Some(l) = md.chars().nth(j) {
-                        if l == '#' {
-                            println!("{l}");
-                            count_hash += 1;
-                        }
-                    }
+    for (i, l) in lines.iter().enumerate() {
+        let n = l.len();
+        print!("{:4} | {:4} | ", i, n);
+        for (j, c) in l.chars().enumerate() {
+            if j == 0 && c == '#' {
+                // heading
+                count_hash = l.chars().filter(|&c| c == '#').count();
+                print!("h{count_hash}");
+            } else if j == 0 && c == '>' {
+                // blockquote
+                print!("blockquote");
+            } else if j == 0 && c == '-' {
+                // list
+                print!("ul ");
+            } else if j == 0 && c.is_ascii_digit() {
+                // codeblock
+                print!("ol ");
+            } else if j == 0 && c == '`' {
+                // codeblock
+                count_backtick = l.chars().filter(|&c| c == '`').count();
+                if count_backtick == 3 {
+                    tag_pre = !tag_pre;
+                    print!("pre | {tag_pre}");
+                } else if count_backtick % 2 == 0 {
+                    print!("p  ");
                 }
-                println!("{count_hash}");
-                i += count_hash;
-                if count_hash == 1 {
-                    html.push_str("<h1>");
-                    tag_head_h1 = true;
-                } else if count_hash == 2 {
-                    html.push_str("<h2>");
-                    tag_head_h2 = true;
-                } else if count_hash == 3 {
-                    html.push_str("<h3>");
-                    tag_head_h3 = true;
-                } else if count_hash == 4 {
-                    html.push_str("<h4>");
-                    tag_head_h4 = true;
-                } else if count_hash == 5 {
-                    html.push_str("<h5>");
-                    tag_head_h5 = true;
-                } else if count_hash == 6 {
-                    html.push_str("<h6>");
-                    tag_head_h6 = true;
-                }
-                tag_head = true;
-                count_hash = 0;
-            } else if c == '>' {
-                html.push_str("<blockquote>");
-                tag_blockquote = true;
-            } else if c == '-' {
-                html.push_str("<li>");
-                tag_list = true;
-            }
-
-            if c == '`' && !tag_backtick {
-                for j in i..i + 3 {
-                    if let Some(l) = md.chars().nth(j) {
-                        if l == '`' {
-                            println!("{l}");
-                            count_backtick += 1;
-                        }
-                    }
-                }
-                println!("{count_backtick}");
-                i += count_backtick - 1;
-                if count_backtick == 1 {
-                    html.push_str("<code>");
-                    tag_code = true;
-                } else if count_backtick == 3 {
-                    html.push_str("<pre><code>");
-                    tag_pre = true;
-                }
-                tag_backtick = true;
-                count_backtick = 0;
-            } else if tag_backtick && c == '`' {
-                if tag_code {
-                    html.push_str("</code>");
-                    tag_code = false;
-                } else if tag_pre {
-                    html.push_str("</code></pre>");
-                    tag_pre = false;
-                    i += 2;
-                }
-
-                tag_backtick = false;
-                println!("{tag_backtick}");
-            }
-
-            if tag_backtick && c != '`' && c != '#' && c != '>' {
-                html.push(c);
-            }
-
-            if tag_list && !tag_backtick && c != '-' && c != '\n' {
-                html.push(c);
-            }
-
-            if tag_head && !tag_backtick && c != '#' && c != '\n' && c != '`' {
-                html.push(c);
-            }
-
-            if tag_blockquote && !tag_backtick && c != '>' && c != '\n' && c != '#' && c != '`' {
-                html.push(c);
-            }
-
-            if tag_list && c == '\n' {
-                html.push_str("</li>");
-                tag_list = false;
-            }
-
-            if tag_blockquote && c == '\n' {
-                html.push_str("</blockquote>");
-                tag_blockquote = false;
-            }
-
-            if tag_head && c == '\n' {
-                if tag_head_h1 {
-                    html.push_str("</h1>");
-                    tag_head_h1 = false;
-                } else if tag_head_h2 {
-                    html.push_str("</h2>");
-                    tag_head_h2 = false;
-                } else if tag_head_h3 {
-                    html.push_str("</h3>");
-                    tag_head_h3 = false;
-                } else if tag_head_h4 {
-                    html.push_str("</h4>");
-                    tag_head_h4 = false;
-                } else if tag_head_h5 {
-                    html.push_str("</h5>");
-                    tag_head_h5 = false;
-                } else if tag_head_h6 {
-                    html.push_str("</h6>");
-                    tag_head_h6 = false;
-                }
-
-                tag_head = false;
+            } else if j == 0 && tag_pre {
+                // paragraph
+                print!("code");
+            } else if j == 0 && !tag_pre {
+                // paragraph
+                print!("p  ");
             }
         }
-        i += 1;
+        println!(" | {l}");
     }
 
-    println!("{}", html);
-
-    write_file("index.html", &html);
+    let _ = write_file("index.html", &html);
 
     Ok(())
 }
