@@ -10,7 +10,43 @@ Markdown to HTML Parser written in rust.
 - Has debug mode for showing outputs of markdown parsing.
 - Visualize outputs using frames ui.
 
-## Installation
+## Usage
+
+### Using `cargo`
+
+```bash
+cargo install hash-tag
+```
+
+- Use `run`
+
+```bash
+hash-tag path/to/file.md
+```
+
+> Generates a `index.html` file
+
+- Specify output file using `-o` flag
+
+```bash
+hash-tag path/to/file.md -o path/to/file.html
+```
+
+- Visualize output file using `-v` flag
+
+```bash
+hash-tag path/to/file.md -v path/to/view.html
+```
+
+> This uses [frames ui](https://pr4j3sh.github.io/ui/).
+
+- Use `debug` mode using `-d` flag
+
+```bash
+hash-tag path/to/file.md -d
+```
+
+### Using source
 
 - Clone the repository
 
