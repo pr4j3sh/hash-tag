@@ -55,8 +55,6 @@ git clone https://github.com/pr4j3sh/hash-tag.git
 cd hash-tag
 ```
 
-## Usage
-
 - Use `run`
 
 ```bash
