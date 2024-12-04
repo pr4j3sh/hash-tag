@@ -107,7 +107,9 @@ fn process_line(l: &str) -> String {
                     chars.next();
                 }
 
-                line.push_str(&format!("<a class=\"link\" href=\"{url}\">{text}</a>"));
+                line.push_str(&format!(
+                    "<a class=\"link\" href=\"{url}\" target=\"_blank\">{text}</a>"
+                ));
             } else {
                 line.push('[');
                 line.push_str(&text);
@@ -138,9 +140,11 @@ fn main() -> io::Result<()> {
         }
     }
     let mut html_view_file = "./views/index.html".to_string();
+    let mut generate_view = false;
     if let Some(pos) = args.iter().position(|x| x == "-v") {
         if pos + 1 < args.len() {
             html_view_file = args[pos + 1].clone();
+            generate_view = true;
         } else {
             panic!("Error: Missing view file name after '-v' flag.");
         }
@@ -288,8 +292,10 @@ fn main() -> io::Result<()> {
         println!("\n{html}");
     }
     write_file(&html_file, &html, debug).expect("Failed to write file.");
-    let html = format!("<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>Hashtag</title><link rel=\"stylesheet\" type=\"text/css\" href=\"https://pr4j3sh.github.io/ui/style.css\" /></head><body><div class=\"container\"><main>{html}</main></div></body></html>");
-    write_file(&html_view_file, &html, debug).expect("Failed to write file.");
+    if generate_view {
+        let html = format!("<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>Hashtag</title><link rel=\"stylesheet\" type=\"text/css\" href=\"https://pr4j3sh.github.io/ui/style.css\" /></head><body><div class=\"container\"><main>{html}</main></div></body></html>");
+        write_file(&html_view_file, &html, debug).expect("Failed to write file.");
+    }
 
     Ok(())
 }
