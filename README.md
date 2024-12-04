@@ -2,7 +2,13 @@
 
 > <#>
 
-Markdown to HTML Parser
+Markdown to HTML Parser written in rust.
+
+### Features
+
+- Parses headings, blockquotes, inline code, codeblock, paragraphs, links, bold, italics, unordered lists and ordered list.
+- Has debug mode for showing outputs of markdown parsing.
+- Visualize outputs using frames ui.
 
 ## Usage
 
@@ -11,6 +17,8 @@ Markdown to HTML Parser
 ```bash
 cargo run path/to/file.md
 ```
+
+> Generates a `index.html` file
 
 - Specify output file using `-o` flag
 
@@ -29,7 +37,7 @@ cargo run path/to/file.md -v path/to/view.html
 - Use `debug` mode using `-d` flag
 
 ```bash
-cargo run path/to/file/md -d
+cargo run path/to/file.md -d
 ```
 
 ## References
