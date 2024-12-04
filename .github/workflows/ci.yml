@@ -1,0 +1,32 @@
+name: Publish to crates
+
+on:
+  release:
+    types:
+      - created
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+
+      - name: Install dependencies
+        run: cargo build --release
+
+      - name: Run tests
+        run: cargo test
+
+      - name: Build the project
+        run: cargo build --release
+
+      - name: Publish Hashtag
+        run: |
+          cargo publish --token ${{ secrets.CARGO_TOKEN }}
