@@ -37,8 +37,8 @@ This file includes all _major_ **Markdown** **features** to test your parser.
 
 ## Links
 
-- [OpenAI](https://openai.com)
-- [Relative Link](./path/to/file)
+- [Profile](https://github.com/pr4j3sh)
+- [Portfolio](https://pr4j3sh.vercel.app/)
 
 ## Blockquotes
 
