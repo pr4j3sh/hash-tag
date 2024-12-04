@@ -1,6 +1,6 @@
 [package]
 name = "hash-tag"
-version = "0.1.2"
+version = "0.1.3"
 edition = "2021"
 authors = ["prajesh <prajesh.eleven118@gmail.com>"]
 description = "Markdown to HTML parser."
@@ -10,4 +10,8 @@ license = "MIT"
 keywords = ["markdown", "html","parser"]
 categories = ["command-line-interface", "compilers","parsing","command-line-utilities"]
 
+[lib]
+crate-type = ["cdylib", "rlib"]
+
 [dependencies]
+wasm-bindgen = "0.2.97"
