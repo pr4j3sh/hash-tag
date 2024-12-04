@@ -2,5 +2,13 @@
 name = "hash-tag"
 version = "0.1.0"
 edition = "2021"
+authors = ["prajesh <prajesh.eleven118@gmail.com>"]
+description = "Markdown to HTML parser."
+readme = "README.md"
+repository = "https://github.com/pr4j3sh/hash-tag"
+license = "MIT"
+license-file = "LICENSE"
+keywords = ["markdown", "html","parser"]
+categories = ["command-line-interface", "compilers","parser-implementation","parsing","command-line-utilities"]
 
 [dependencies]
