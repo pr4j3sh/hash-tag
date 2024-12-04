@@ -7,5 +7,5 @@ Cargo.lock
 
 *.pdb
 
-*.html
-test.md
+temp/*.html
+views/*.html
