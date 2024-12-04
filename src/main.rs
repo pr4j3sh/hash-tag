@@ -131,7 +131,9 @@ fn main() -> io::Result<()> {
     } else {
         panic!("Error: You must provide a Markdown file.");
     };
-    let mut html_file = "./temp/index.html".to_string();
+
+    let mut html_file = "index.html".to_string();
+
     if let Some(pos) = args.iter().position(|x| x == "-o") {
         if pos + 1 < args.len() {
             html_file = args[pos + 1].clone();
@@ -139,8 +141,10 @@ fn main() -> io::Result<()> {
             panic!("Error: Missing output file name after '-o' flag.");
         }
     }
-    let mut html_view_file = "./views/index.html".to_string();
+
+    let mut html_view_file = "view.html".to_string();
     let mut generate_view = false;
+
     if let Some(pos) = args.iter().position(|x| x == "-v") {
         if pos + 1 < args.len() {
             html_view_file = args[pos + 1].clone();
@@ -149,10 +153,8 @@ fn main() -> io::Result<()> {
             panic!("Error: Missing view file name after '-v' flag.");
         }
     }
-    let mut debug = false;
-    if args.contains(&"-d".to_string()) {
-        debug = true;
-    }
+
+    let debug = args.contains(&"-d".to_string());
 
     let md = read_file(md_file, debug).expect("Failed to read file");
     let lines: Vec<String> = get_lines(&md);
