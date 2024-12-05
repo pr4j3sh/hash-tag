@@ -33,10 +33,12 @@ jobs:
           node-version: "20"
           registry-url: https://registry.npmjs.org/
 
-      - name: Change directory to pkg
-        run: cd pkg
+      - name: List files in the directory
+        run: ls -la
 
       - name: Publish to npm
-        run: npm publish --access public
+        run: |
+          cd pkg
+          npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
