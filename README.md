@@ -2,12 +2,11 @@
 
 > <#>
 
-Markdown to HTML Parser written in rust.
+Markdown to HTML Parser written in `rust`, built with wasm, for direct usage in `javascript`.
 
 ### Features
 
 - Parses headings, blockquotes, inline code, codeblock, paragraphs, links, bold, italics, unordered lists and ordered list.
-- Has debug mode for showing outputs of markdown parsing.
 - Visualize outputs using frames ui.
 
 ## Usage
@@ -40,51 +39,47 @@ hash-tag path/to/file.md -v path/to/view.html
 
 > This uses [frames ui](https://pr4j3sh.github.io/ui/).
 
-- Use `debug` mode using `-d` flag
+### Using `npm`
+
+- Create a node environment
 
 ```bash
-hash-tag path/to/file.md -d
+mkdir test
+cd test
+npm init -y
 ```
 
-### Using source
-
-- Clone the repository
+- Add `"type": "module",` to `package.json` file.
 
 ```bash
-git clone https://github.com/pr4j3sh/hash-tag.git
-cd hash-tag
+npm install hash-tag
 ```
 
-- Use `run`
+- Create a new file `index.js` and write the code as:
 
-```bash
-cargo run path/to/file.md
+```js
+import * as wasm from "./pkg/hash_tag.js";
+
+const html = wasm.parse("## heading 2\n");
+console.log(html);
 ```
 
-> Generates a `index.html` file
-
-- Specify output file using `-o` flag
+- Run using
 
 ```bash
-cargo run path/to/file.md -o path/to/file.html
+node index.js
 ```
 
-- Visualize output file using `-v` flag
+- Outputs
 
-```bash
-cargo run path/to/file.md -v path/to/view.html
-```
-
-> This uses [frames ui](https://pr4j3sh.github.io/ui/).
-
-- Use `debug` mode using `-d` flag
-
-```bash
-cargo run path/to/file.md -d
+```html
+<h2>heading 2</h2>
 ```
 
 ## References
 
 - [Rust Documentation](https://www.rust-lang.org/learn/get-started)
+- [wasm-bindgen](https://github.com/rustwasm/wasm-bindgen)
+- [wasm-pack](https://github.com/rustwasm/wasm-pack)
 - [frames ui](https://pr4j3sh.github.io/ui/)
 - [@pr4j3sh/frames](https://github.com/pr4j3sh/frames)

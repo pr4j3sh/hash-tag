@@ -1,22 +1,4 @@
-use std::fs;
-use std::io;
 use wasm_bindgen::prelude::*;
-
-fn read_file(filename: &str, debug: bool) -> io::Result<String> {
-    let md = fs::read_to_string(filename)?;
-    if debug {
-        println!("{filename} read");
-    }
-    Ok(md)
-}
-
-fn write_file(filename: &str, html: &str, debug: bool) -> io::Result<()> {
-    fs::write(filename, html)?;
-    if debug {
-        println!("{filename} written");
-    }
-    Ok(())
-}
 
 fn get_lines(md: &str) -> Vec<String> {
     let mut lines: Vec<String> = Vec::new();
@@ -31,23 +13,22 @@ fn get_lines(md: &str) -> Vec<String> {
             line.push(c);
         }
     }
+
+    if !line.is_empty() {
+        lines.push(line);
+    }
+
     lines
 }
 
-fn close_list_tags(tag_ul: &mut bool, tag_ol: &mut bool, html: &mut String, debug: bool) {
+fn close_list_tags(tag_ul: &mut bool, tag_ol: &mut bool, html: &mut String) {
     if *tag_ul {
         html.push_str("</ul>");
         *tag_ul = false;
-        if debug {
-            print!("ul | ");
-        }
     }
     if *tag_ol {
         html.push_str("</ol>");
         *tag_ol = false;
-        if debug {
-            print!("ol | ");
-        }
     }
 }
 
@@ -107,9 +88,15 @@ fn process_line(l: &str) -> String {
                     chars.next();
                 }
 
-                line.push_str(&format!(
-                    "<a class=\"link\" href=\"{url}\" target=\"_blank\">{text}</a>"
-                ));
+                if !url.is_empty() {
+                    line.push_str(&format!(
+                        "<a class=\"link\" href=\"{url}\" target=\"_blank\">{text}</a>"
+                    ));
+                } else {
+                    line.push('[');
+                    line.push_str(&text);
+                    line.push(']');
+                }
             } else {
                 line.push('[');
                 line.push_str(&text);
@@ -124,105 +111,55 @@ fn process_line(l: &str) -> String {
 }
 
 #[wasm_bindgen]
-pub fn parse(
-    md_file: String,
-    html_file: Option<String>,
-    html_view_file: Option<String>,
-    generate_view: Option<bool>,
-    debug: Option<bool>,
-) -> Result<(), JsValue> {
-    let html_file = html_file.unwrap_or_else(|| "index.html".to_string());
-    let html_view_file = html_view_file.unwrap_or_else(|| "view.html".to_string());
-    let generate_view = generate_view.unwrap_or(false);
-    let debug = debug.unwrap_or(false);
-
-    let md = read_file(&md_file, debug).expect("Failed to read file");
-    let lines: Vec<String> = get_lines(&md);
+pub fn parse(md: String) -> String {
     let mut html = String::from("");
+
+    let lines: Vec<String> = get_lines(&md);
 
     let mut tag_pre = false;
     let mut tag_ul = false;
     let mut tag_ol = false;
 
-    if debug {
-        println!("Debugging enabled");
-    }
-
-    for (i, l) in lines.iter().enumerate() {
-        if debug {
-            print!("{:4} | ", i);
-        }
+    for l in lines.iter() {
         for (j, c) in l.chars().enumerate() {
             if j == 0 && c == '#' {
                 // heading
-                close_list_tags(&mut tag_ul, &mut tag_ol, &mut html, debug);
+                close_list_tags(&mut tag_ul, &mut tag_ol, &mut html);
                 let count_hash = l.chars().filter(|&c| c == '#').count();
-                if debug {
-                    print!("h{count_hash} | ");
-                }
                 let line = process_line(&l[count_hash + 1..]);
                 let line = format!("<h{count_hash}>{line}</h{count_hash}>");
                 html.push_str(&line);
-                if debug {
-                    print!("{line}");
-                }
             } else if j == 0 && c == '>' {
                 // blockquote
-                close_list_tags(&mut tag_ul, &mut tag_ol, &mut html, debug);
-                if debug {
-                    print!("blockquote");
-                }
+                close_list_tags(&mut tag_ul, &mut tag_ol, &mut html);
                 let line = process_line(&l[2..]);
                 let line = format!("<blockquote>{line}</blockquote>");
                 html.push_str(&line);
-                if debug {
-                    print!(" | {line}");
-                }
             } else if j == 0 && c == '-' {
                 // unordered list
                 if l.trim().chars().all(|ch| ch == '-') {
                     html.push_str("<hr>");
-                    if debug {
-                        print!("hr | ");
-                    }
                     break;
                 }
                 if !tag_ul {
                     html.push_str("<ul>");
-                    if debug {
-                        print!("ul | ");
-                    }
                 }
                 tag_ul = true;
-                if debug {
-                    print!("li | {tag_ul}");
-                }
                 let line = process_line(&l[2..]);
                 let line = format!("<li>{line}</li>");
                 html.push_str(&line);
-                if debug {
-                    print!(" | {line}");
-                }
             } else if j == 0 && c.is_ascii_digit() {
                 // ordered list
                 if !tag_ol {
-                    if debug {
-                        print!("ol | ");
-                    }
+                    html.push_str("<ol>");
                 }
                 tag_ol = true;
-                if debug {
-                    print!("li | {tag_ol}");
-                }
                 let line = process_line(&l[3..]);
                 let line = format!("<li>{line}</li>");
                 html.push_str(&line);
-                if debug {
-                    print!(" | {line}");
-                }
             } else if j == 0 && c == '`' {
                 // codeblock
-                close_list_tags(&mut tag_ul, &mut tag_ol, &mut html, debug);
+                close_list_tags(&mut tag_ul, &mut tag_ol, &mut html);
                 let count_backtick = l.chars().filter(|&c| c == '`').count();
                 if count_backtick == 3 {
                     tag_pre = !tag_pre;
@@ -231,57 +168,24 @@ pub fn parse(
                     } else {
                         html.push_str("</pre>");
                     }
-                    if debug {
-                        print!("pre | {tag_pre}");
-                    }
                 } else if count_backtick % 2 == 0 {
-                    if debug {
-                        print!("p | ");
-                    }
                     let line = process_line(l);
                     let line = format!("<p>{line}</p>");
                     html.push_str(&line);
-                    if debug {
-                        print!("{line}");
-                    }
                 }
             } else if j == 0 && tag_pre {
                 // paragraph
-                if debug {
-                    print!("code");
-                }
                 let line = format!("<code>{l}</code>\n");
                 html.push_str(&line);
-                if debug {
-                    print!(" | {line}");
-                }
             } else if j == 0 && !tag_pre {
                 // paragraph
-                close_list_tags(&mut tag_ul, &mut tag_ol, &mut html, debug);
-                if debug {
-                    print!("p | ");
-                }
+                close_list_tags(&mut tag_ul, &mut tag_ol, &mut html);
                 let line = process_line(l);
                 let line = format!("<p>{line}</p>");
                 html.push_str(&line);
-                if debug {
-                    print!("{line}");
-                }
             }
         }
-        if debug {
-            println!(" | {l}");
-        }
     }
 
-    if debug {
-        println!("\n{html}");
-    }
-    write_file(&html_file, &html, debug).expect("Failed to write file.");
-    if generate_view {
-        let html = format!("<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>Hashtag</title><link rel=\"stylesheet\" type=\"text/css\" href=\"https://pr4j3sh.github.io/ui/style.css\" /></head><body><div class=\"container\"><main>{html}</main></div></body></html>");
-        write_file(&html_view_file, &html, debug).expect("Failed to write file.");
-    }
-
-    Ok(())
+    html
 }
