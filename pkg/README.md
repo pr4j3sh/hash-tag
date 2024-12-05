@@ -52,7 +52,7 @@ npm init -y
 - Add `"type": "module",` to `package.json` file.
 
 ```bash
-npm install hash-tag
+npm install @pr4j3sh/hash-tag
 ```
 
 - Create a new file `index.js` and write the code as:
