@@ -1,6 +1,6 @@
 [package]
 name = "hash-tag"
-version = "0.1.11"
+version = "0.1.12"
 edition = "2021"
 authors = ["prajesh <prajesh.eleven118@gmail.com>"]
 description = "Markdown to HTML parser."
