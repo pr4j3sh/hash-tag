@@ -1,10 +1,10 @@
 {
-  "name": "hash-tag",
+  "name": "@pr4j3sh/hash-tag",
   "collaborators": [
     "prajesh <prajesh.eleven118@gmail.com>"
   ],
   "description": "Markdown to HTML parser.",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -23,3 +23,4 @@
     "parser"
   ]
 }
+
