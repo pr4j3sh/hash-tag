@@ -51,6 +51,8 @@ npm init -y
 
 - Add `"type": "module",` to `package.json` file.
 
+- Install [@pr4j3sh/hash-tag](https://www.npmjs.com/package/@pr4j3sh/hash-tag) npm package
+
 ```bash
 npm install @pr4j3sh/hash-tag
 ```
