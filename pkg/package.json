@@ -1,0 +1,25 @@
+{
+  "name": "hash-tag",
+  "collaborators": [
+    "prajesh <prajesh.eleven118@gmail.com>"
+  ],
+  "description": "Markdown to HTML parser.",
+  "version": "0.1.3",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pr4j3sh/hash-tag"
+  },
+  "files": [
+    "hash_tag_bg.wasm",
+    "hash_tag.js",
+    "hash_tag.d.ts"
+  ],
+  "main": "hash_tag.js",
+  "types": "hash_tag.d.ts",
+  "keywords": [
+    "markdown",
+    "html",
+    "parser"
+  ]
+}
