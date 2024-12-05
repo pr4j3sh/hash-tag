@@ -58,7 +58,7 @@ npm install hash-tag
 - Create a new file `index.js` and write the code as:
 
 ```js
-import * as wasm from "./pkg/hash_tag.js";
+import * as wasm from "hash_tag";
 
 const html = wasm.parse("## heading 2\n");
 console.log(html);
