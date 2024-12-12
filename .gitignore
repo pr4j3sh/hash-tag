@@ -1,5 +1,6 @@
 debug/
 target/
+pkg/
 
 Cargo.lock
 
